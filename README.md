@@ -77,7 +77,7 @@ node src/app.js
 ```bash
 cd client
 npm install
-cp .env.example .env   # Set VITE_API_URL=http://localhost:5000
+cp .env.example .env   # Set VITE_API_URL=http://localhost:5000  # your local server URL
 npx vite
 ```
 
@@ -89,17 +89,14 @@ cp .env.example .env   # Add Roboflow credentials
 python main.py
 ```
 
-Open **http://localhost:5173** for the citizen portal.  
-Open **http://localhost:5173/admin/login** for the admin dashboard.
+  
+
 
 ---
 
-## 🔑 Admin Credentials (Seeded on startup)
+## 🔑 Admin Access
 
-| Email | Role | City |
-|-------|------|------|
-| `shivakarthik5621@gmail.com` | Super Admin | All India |
-| `shivakarthik5622@gmail.com` | City Admin | Hyderabad |
+Admin accounts are seeded on startup. Contact the system administrator for credentials.
 
 ### Citizen Accounts
 Register at `/login` with email + password. OTP email verification required (2FA via Resend).
@@ -132,7 +129,7 @@ PORT=8000
 
 ### Client (`client/.env`)
 ```env
-VITE_API_URL=http://localhost:5000
+VITE_API_URL=http://localhost:5000  # your local server URL
 ```
 
 ---
