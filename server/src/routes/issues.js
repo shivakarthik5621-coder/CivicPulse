@@ -71,16 +71,19 @@ router.post('/', submitLimiter, upload.single('photo'), async (req, res) => {
     let ward = req.body.ward || 'Unknown';
     try {
       const geoResponse = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
-        { headers: { 'User-Agent': 'CivicPulse/1.0' }, timeout: 5000 }
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
+        { timeout: 5000 }
       );
-      if (geoResponse.data && geoResponse.data.address) {
-        const addr = geoResponse.data.address;
-        city = addr.city || addr.town || addr.village || addr.state_district || city;
-        ward = addr.suburb || addr.neighbourhood || addr.road || ward;
+      console.log('BigDataCloud raw response:', JSON.stringify(geoResponse.data));
+      const data = geoResponse.data;
+      if (data) {
+        city = data.city || data.locality || data.principalSubdivision || city;
+        ward = data.localityInfo?.administrative?.find(a => a.adminLevel >= 8)?.name
+               || data.locality || ward;
       }
     } catch (geoErr) {
-      console.warn('Reverse geocoding failed, using provided city/ward:', geoErr.message);
+      console.warn('Reverse geocoding failed, using provided city/ward:',
+        geoErr.response ? `HTTP ${geoErr.response.status}` : geoErr.message);
     }
 
     // 4. Generate ticket ID
