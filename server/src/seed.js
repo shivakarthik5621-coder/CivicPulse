@@ -7,7 +7,7 @@ const seedAdmins = [
   { email: 'shivakarthik565@gmail.com', name: 'Hyderabad Sanitation Admin', role: 'city_garbage', city: 'Hyderabad', ward: null, category: 'garbage_dump', password: 'aircrash@123' },
   { email: 'shivakarthik8780@gmail.com', name: 'Mangalagiri Sanitation Admin', role: 'city_garbage', city: 'Mangalagiri', ward: null, category: 'garbage_dump', password: 'aircrash@123' },
   { email: 'hrishikeshharnoor@gmail.com', name: 'Mangalagiri Water Admin', role: 'city_water', city: 'Mangalagiri', ward: null, category: 'water_leakage', password: 'aircrash@123' },
-  { email: 'nikkisai7379@gmail.com', name: 'Mangalagiri Electricity Admin', role: 'city_streetlight', city: 'Mangalagiri, ward: null, category: 'broken_streetlight', password: 'aircrash@123' },
+  { email: 'nikkisai7379@gmail.com', name: 'Mangalagiri Electricity Admin', role: 'city_streetlight', city: 'Mangalagiri', ward: null, category: 'broken_streetlight', password: 'aircrash@123' },
 ];
 
 async function seedOnStartup() {
