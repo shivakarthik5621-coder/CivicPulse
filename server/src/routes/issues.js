@@ -69,21 +69,33 @@ router.post('/', submitLimiter, upload.single('photo'), async (req, res) => {
     // 3. Reverse geocode to get city and ward
     let city = req.body.city || 'Unknown';
     let ward = req.body.ward || 'Unknown';
-    try {
-      const geoResponse = await axios.get(
-        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
-        { timeout: 5000 }
-      );
-      console.log('BigDataCloud raw response:', JSON.stringify(geoResponse.data));
-      const data = geoResponse.data;
-      if (data) {
-        city = data.city || data.locality || data.principalSubdivision || city;
-        ward = data.localityInfo?.administrative?.find(a => a.adminLevel >= 8)?.name
-               || data.locality || ward;
+    const lat = parseFloat(latitude);
+    const lon = parseFloat(longitude);
+    console.log('Raw lat/lon received:', JSON.stringify(latitude), JSON.stringify(longitude));
+    if (Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+      try {
+        const params = new URLSearchParams({
+          latitude: lat.toFixed(6),
+          longitude: lon.toFixed(6),
+          localityLanguage: 'en'
+        });
+        const geoResponse = await axios.get(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?${params.toString()}`,
+          { timeout: 5000 }
+        );
+        console.log('BigDataCloud raw response:', JSON.stringify(geoResponse.data));
+        const data = geoResponse.data;
+        if (data) {
+          city = data.city || data.locality || data.principalSubdivision || city;
+          ward = data.localityInfo?.administrative?.find(a => a.adminLevel >= 8)?.name
+                 || data.locality || ward;
+        }
+      } catch (geoErr) {
+        console.warn('Reverse geocoding failed, using provided city/ward:',
+          geoErr.response ? `HTTP ${geoErr.response.status}` : geoErr.message);
       }
-    } catch (geoErr) {
-      console.warn('Reverse geocoding failed, using provided city/ward:',
-        geoErr.response ? `HTTP ${geoErr.response.status}` : geoErr.message);
+    } else {
+      console.warn('Invalid or missing lat/lon, skipping reverse geocode:', latitude, longitude);
     }
 
     // 4. Generate ticket ID
