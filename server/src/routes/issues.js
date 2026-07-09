@@ -69,33 +69,23 @@ router.post('/', submitLimiter, upload.single('photo'), async (req, res) => {
     // 3. Reverse geocode to get city and ward
     let city = req.body.city || 'Unknown';
     let ward = req.body.ward || 'Unknown';
-    const lat = parseFloat(latitude);
-    const lon = parseFloat(longitude);
-    console.log('Raw lat/lon received:', JSON.stringify(latitude), JSON.stringify(longitude));
-    if (Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
-      try {
-        const params = new URLSearchParams({
-          latitude: lat.toFixed(6),
-          longitude: lon.toFixed(6),
-          localityLanguage: 'en'
-        });
-        const geoResponse = await axios.get(
-          `https://api.bigdatacloud.net/data/reverse-geocode-client?${params.toString()}`,
-          { timeout: 5000 }
-        );
-        console.log('BigDataCloud raw response:', JSON.stringify(geoResponse.data));
-        const data = geoResponse.data;
-        if (data) {
-          city = data.city || data.locality || data.principalSubdivision || city;
-          ward = data.localityInfo?.administrative?.find(a => a.adminLevel >= 8)?.name
-                 || data.locality || ward;
-        }
-      } catch (geoErr) {
-        console.warn('Reverse geocoding failed, using provided city/ward:',
-          geoErr.response ? `HTTP ${geoErr.response.status}` : geoErr.message);
+    try {
+      const geoResponse = await axios.get(
+        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
+        { headers: { 'User-Agent': 'CivicPulse/1.0 (contact: nikkisai7379@gmail.com)' }, timeout: 5000 }
+      );
+      console.log('Nominatim raw response:', JSON.stringify(geoResponse.data));
+      if (geoResponse.data && geoResponse.data.address) {
+        const addr = geoResponse.data.address;
+        city = addr.city || addr.town || addr.village || addr.municipality ||
+               addr.county || addr.state_district || city;
+        ward = addr.suburb || addr.neighbourhood || addr.quarter || addr.road || ward;
+      } else if (geoResponse.data && geoResponse.data.error) {
+        console.warn('Nominatim returned an error payload:', geoResponse.data.error);
       }
-    } else {
-      console.warn('Invalid or missing lat/lon, skipping reverse geocode:', latitude, longitude);
+    } catch (geoErr) {
+      console.warn('Reverse geocoding failed, using provided city/ward:',
+        geoErr.response ? `HTTP ${geoErr.response.status}` : geoErr.message);
     }
 
     // 4. Generate ticket ID
