@@ -5,9 +5,9 @@ const seedAdmins = [
   { email: 'shivakarthik5621@gmail.com', name: 'Super Admin', role: 'super_admin', city: null, ward: null, category: null, password: 'aircrash123' },
   { email: 'shivakarthik5622@gmail.com', name: 'Hyderabad Road Safety Admin', role: 'city_potholes', city: 'Hyderabad', ward: null, category: 'pothole', password: 'aircrash@123' },
   { email: 'shivakarthik565@gmail.com', name: 'Hyderabad Sanitation Admin', role: 'city_garbage', city: 'Hyderabad', ward: null, category: 'garbage_dump', password: 'aircrash@123' },
-  { email: 'shivakarthik8780@gmail.com', name: 'Vizianagaram Sanitation Admin', role: 'city_garbage', city: 'Vizianagaram', ward: null, category: 'garbage_dump', password: 'aircrash@123' },
-  { email: 'hrishikeshharnoor@gmail.com', name: 'Vizianagaram Water Admin', role: 'city_water', city: 'Vizianagaram', ward: null, category: 'water_leakage', password: 'aircrash@123' },
-  { email: 'nikkisai73@gmail.com', name: 'Vizianagaram Electricity Admin', role: 'city_streetlight', city: 'Vizianagaram', ward: null, category: 'broken_streetlight', password: 'aircrash@123' },
+  { email: 'shivakarthik8780@gmail.com', name: 'Mangalagiri Sanitation Admin', role: 'city_garbage', city: 'Mangalagiri', ward: null, category: 'garbage_dump', password: 'aircrash@123' },
+  { email: 'hrishikeshharnoor@gmail.com', name: 'Mangalagiri Water Admin', role: 'city_water', city: 'Mangalagiri', ward: null, category: 'water_leakage', password: 'aircrash@123' },
+  { email: 'nikkisai7379@gmail.com', name: 'Mangalagiri Electricity Admin', role: 'city_streetlight', city: 'Mangalagiri, ward: null, category: 'broken_streetlight', password: 'aircrash@123' },
 ];
 
 async function seedOnStartup() {
