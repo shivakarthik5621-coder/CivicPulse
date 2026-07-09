@@ -66,26 +66,21 @@ router.post('/', submitLimiter, upload.single('photo'), async (req, res) => {
     // 2. Classify photo using AI service
     const classification = await classifyImage(photoUrl);
 
-    // 3. Reverse geocode to get city and ward
+   // 3. Reverse geocode to get city and ward
     let city = req.body.city || 'Unknown';
     let ward = req.body.ward || 'Unknown';
     try {
       const geoResponse = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`,
-        { headers: { 'User-Agent': 'CivicPulse/1.0 (contact: nikkisai7379@gmail.com)' }, timeout: 5000 }
+        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+        { headers: { 'User-Agent': 'CivicPulse/1.0' }, timeout: 5000 }
       );
-      console.log('Nominatim raw response:', JSON.stringify(geoResponse.data));
       if (geoResponse.data && geoResponse.data.address) {
         const addr = geoResponse.data.address;
-        city = addr.city || addr.town || addr.village || addr.municipality ||
-               addr.county || addr.state_district || city;
-        ward = addr.suburb || addr.neighbourhood || addr.quarter || addr.road || ward;
-      } else if (geoResponse.data && geoResponse.data.error) {
-        console.warn('Nominatim returned an error payload:', geoResponse.data.error);
+        city = addr.city || addr.town || addr.village || addr.state_district || city;
+        ward = addr.suburb || addr.neighbourhood || addr.road || ward;
       }
     } catch (geoErr) {
-      console.warn('Reverse geocoding failed, using provided city/ward:',
-        geoErr.response ? `HTTP ${geoErr.response.status}` : geoErr.message);
+      console.warn('Reverse geocoding failed, using provided city/ward:', geoErr.message);
     }
 
     // 4. Generate ticket ID
